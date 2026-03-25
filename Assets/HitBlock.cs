@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
  
 public class HitBlock : MonoBehaviour
@@ -13,6 +14,8 @@ public class HitBlock : MonoBehaviour
     [SerializeField]
     private bool isHidden = false;
  
+    private bool isAnimating = false;
+ 
     void Awake()
     {
         animator = GetComponent<Animator>();
@@ -23,7 +26,8 @@ public class HitBlock : MonoBehaviour
         {
             sr.enabled = false;
             pe2d.enabled = true;
-        } else
+        }
+        else
         {
             sr.enabled = true;
             pe2d.enabled = false;
@@ -39,7 +43,7 @@ public class HitBlock : MonoBehaviour
  
         ContactPoint2D contactPoint = collision.GetContact(0);
  
-        if (contactPoint.normal.y > 0.5f)
+        if (contactPoint.normal.y > 0.5f && !isAnimating)
         {
             sr.enabled = true;
             pe2d.enabled = false;
@@ -48,17 +52,33 @@ public class HitBlock : MonoBehaviour
  
             if (itemPrefabStored != null)
             {
-                GameObject itemStored = Instantiate(
+                StartCoroutine(ItemStoredAnimation());
+            }
+        }
+    }
+ 
+    IEnumerator ItemStoredAnimation()
+    {
+        isAnimating = true;
+ 
+        GameObject itemStored = Instantiate(
                     itemPrefabStored,
                     transform.position,
                     Quaternion.identity
                 );
-                Collectible itemCollectible = itemStored.GetComponent<Collectible>();
-                //Activation de l'animation
-                itemCollectible.Picked();
-
-            }
-        }
+        Collectible itemCollectible = itemStored.GetComponent<Collectible>();
+        // Désactive la récupération de l'objet quand il a été touché
+        itemCollectible.canBeDestroyedOnContact = false;
+        // Méthode custom ajouté à la classe "Transform" qui permet d'animer la position
+        // d'un gameobject (durée par défaut 0.125s).
+        // Ici on augmente de 50% la position en Y du gameobject
+        yield return itemCollectible.transform.MoveBackAndForth(
+            itemStored.transform.localPosition + Vector3.up * 1.5f
+        );
+        // Activation de l'animation
+        itemCollectible.Picked();
+ 
+        isAnimating = false;
     }
 }
  
