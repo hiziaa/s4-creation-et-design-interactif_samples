@@ -4,6 +4,12 @@ using UnityEngine;
 public class HitBlock : MonoBehaviour
 {
     private Animator animator;
+
+    [SerializeField]
+    private int maxHits = 2;
+
+    private int currentHits = 0;
+
     private SpriteRenderer sr;
  
     private PlatformEffector2D pe2d;
@@ -43,8 +49,15 @@ public class HitBlock : MonoBehaviour
  
         ContactPoint2D contactPoint = collision.GetContact(0);
  
-        if (contactPoint.normal.y > 0.5f && !isAnimating)
+        if (contactPoint.normal.y > 0.5f && currentHits < maxHits)
         {
+            currentHits = currentHits + 1;
+            animator.SetTrigger("Hit");
+
+            if(currentHits == maxHits)
+            {
+                sr.color = new Color (1f,1f,0.5f);
+            }
             sr.enabled = true;
             pe2d.enabled = false;
  
