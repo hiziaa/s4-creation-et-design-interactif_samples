@@ -1,16 +1,22 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HealthBarUI : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("ScriptableObjects")]
+    public PlayerData playerData;
+    
+    private Slider slider;
+
     void Start()
     {
-        
+        slider = GetComponent<Slider>();
+        slider.maxValue = playerData.maxHealth;
+        slider.value = playerData.currentHealth;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        slider.value = playerData.currentHealth;
     }
 }
