@@ -8,12 +8,12 @@ public class HealthBarUI : MonoBehaviour
     
     private Slider slider;
 
-    void Start()
-    {
-        slider = GetComponent<Slider>();
-        slider.maxValue = playerData.maxHealth;
-        slider.value = playerData.currentHealth;
-    }
+   void Awake()
+{
+    slider = GetComponent<Slider>();
+    slider.maxValue = playerData.maxHealth;
+    slider.value = playerData.maxHealth;
+}
 
     void Update()
     {
